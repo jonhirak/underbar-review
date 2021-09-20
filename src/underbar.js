@@ -127,6 +127,24 @@
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array, isSorted, iterator) {
+    var result = [];
+    var alreadySeen = {};
+
+    _.each(array, function(item, i, collection) {
+
+      // if some item has been seen before,
+      if (!alreadySeen[item]) {
+        // log it in the object
+        alreadySeen[item] = 'seen';
+        // push it to the result
+        result.push(item);
+      }
+
+      // otherwise
+    });
+
+    return result;
+
   };
 
 
