@@ -153,6 +153,19 @@
     // map() is a useful primitive iteration function that works a lot
     // like each(), but in addition to running the operation on all
     // the members, it also maintains an array of results.
+
+    //accumulator
+    var result = [];
+
+    //use each
+    _.each(collection, function(item) {
+      // some variable = iterator(item)
+      var iterated = iterator(item);
+
+      result.push(iterated);
+    });
+
+    return result;
   };
 
   /*
@@ -193,7 +206,23 @@
   //     return total + number * number;
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
-  _.reduce = function(collection, iterator, accumulator) {
+  _.reduce = function(collection, iterator, accumulator, context) {
+
+    // if no context, use _.identity()
+    // if no accum, supply zero
+    // [1, 2, 3]
+    if (accumulator === undefined) {
+      accumulator = collection[0];
+
+      collection = collection.slice();
+      collection.shift();
+    }
+
+    _.each(collection, function(currentItem) {
+      accumulator = iterator(accumulator, currentItem);
+    });
+    // accumulator === memo
+    return accumulator;
   };
 
   // Determine if the array or object contains a given value (using `===`).
@@ -212,6 +241,16 @@
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
+    // reduced ([1, 2, 3, 4])
+    // truth test is all elements are even
+    // true
+    var memo = true;
+
+    _.reduce(collection, function(accumulator, item) {
+      return iterator(item);
+    }, memo);
+
+    return memo;
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
