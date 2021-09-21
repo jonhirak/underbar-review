@@ -91,9 +91,11 @@
       });
 
       it('fails for a collection of all-falsy values', function() {
+        var isTrue = function(statement) {
+          return statement === true;
+        };
         // Replace this line with an `expect` statement that tests
-        // the behavior described by the `it` string
-        throw new Error('This test is missing.');
+        expect(_.every([null, undefined, 0, NaN], isTrue)).to.be.false;
       });
 
       it('fails for a collection containing mixed falsy and truthy values', function() {

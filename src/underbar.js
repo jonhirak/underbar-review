@@ -244,13 +244,27 @@
     // reduced ([1, 2, 3, 4])
     // truth test is all elements are even
     // true
-    var memo = true;
+    // var memo = true;
 
-    _.reduce(collection, function(accumulator, item) {
-      return iterator(item);
-    }, memo);
+    // _.reduce(collection, function(accumulator, item) {
+    //   return iterator(item);
+    // }, memo);
 
-    return memo;
+    // return memo;
+    if (Array.isArray(collection)) {
+      for (var i = 0; i < collection.length; i++) {
+        if (!iterator(collection[i])) {
+          return false;
+        }
+      }
+    } else {
+      for (var key in collection) {
+        if (!iterator(collection[key])) {
+          return false;
+        }
+      }
+    }
+    return true;
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
