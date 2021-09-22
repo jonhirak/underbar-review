@@ -251,6 +251,10 @@
     // }, memo);
 
     // return memo;
+    if (!iterator) {
+      iterator = _.identity;
+    }
+
     if (Array.isArray(collection)) {
       for (var i = 0; i < collection.length; i++) {
         if (!iterator(collection[i])) {
@@ -264,6 +268,7 @@
         }
       }
     }
+
     return true;
   };
 
@@ -271,6 +276,25 @@
   // provided, provide a default one
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
+    if (!iterator) {
+      iterator = _.identity;
+    }
+
+    if (Array.isArray(collection)) {
+      for (var i = 0; i < collection.length; i++) {
+        if (iterator(collection[i])) {
+          return true;
+        }
+      }
+    } else {
+      for (var key in collection) {
+        if (iterator(collection[key])) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   };
 
 
@@ -293,11 +317,34 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+    // loop over arguments starting at i = 1
+    _.each(arguments, function (item, i) {
+      if (i !== 0) {
+        _.each(item, function (value, key) {
+          obj[key] = value;
+        });
+      }
+    });
+
+    return obj;
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+    _.each(arguments, function (item, i) {
+      if (i !== 0) {
+        _.each(item, function (value, key) {
+          // if property does not exist
+          if (!(key in obj)) {
+            obj[key] = value;
+          }
+        });
+      }
+    });
+
+
+    return obj;
   };
 
 
@@ -341,7 +388,25 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    var prevArg = {};
+    var result;
+
+    return function () {
+      //have we seen this argument before?
+      var stringArg = JSON.stringify(arguments);
+      if (!prevArg[stringArg]) {
+        result = func.apply(this, arguments);
+        prevArg[stringArg] = result;
+      } else {
+        result = prevArg[stringArg];
+      }
+      return result;
+    };
   };
+
+
+
+
 
   // Delays a function for the given number of milliseconds, and then calls
   // it with the arguments supplied.
@@ -350,6 +415,33 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+    // get other args
+    var otherArgs = [];
+    // collect from index 2 of args
+    // empty array to hold
+    // _.each()
+
+    // _.each(arguments, function(item, i) {
+    //   if (i !== 0 && i !== 1) {
+    //     otherArgs.push(item);
+    //   }
+    // });
+    // ignore index 0 and 1
+
+
+    for (var i = 2; i < arguments.length; i++) {
+      otherArgs.push(arguments[i]);
+    }
+    console.log('other arguments to be passed: ', otherArgs);
+
+
+    // time passed
+    // setTimeout an anon function
+    setTimeout(function() {
+      func.apply(null, otherArgs);
+    }, wait);
+
+
   };
 
 
@@ -364,6 +456,24 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    // copy the array
+    var arrayCopy = array.slice();
+    // generate random index numbers
+    var result = [];
+    var randomIndex;
+
+    while (arrayCopy.length !== 0) {
+      var max = arrayCopy.length - 1;
+      randomIndex = Math.floor(Math.random() * max);
+
+      console.log('random Index: ' + randomIndex);
+      result.push(arrayCopy[randomIndex]);
+      arrayCopy.splice(randomIndex, 1);
+    }
+    // anything from zero length - 1 inclusive
+
+    // push item at that index to
+    return result;
   };
 
 
